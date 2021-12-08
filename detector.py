@@ -44,6 +44,6 @@ def main():
         df.columns=["Project path","File name","Line number","Code smell name"]
     except:
         print("There is no code smells in this project.")
-    df.to_csv('codesmell.csv')   #save the df to the csv files
+    df.to_csv('codesmell.csv')   #save the df to the csv file
     
 main()
