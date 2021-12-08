@@ -10,7 +10,7 @@ import parse
 from threshold import smells_metrics_thresholds
 
 #detect the code smells
-def detect_smells(path,take,look,what,pip):
+def detect_smells(path):
     detected_codesmells = [] #store the code smells into list
     for file_name in walk_path(path):
         print(file_name)
