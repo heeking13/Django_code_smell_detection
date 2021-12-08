@@ -37,7 +37,8 @@ def detect_smells(path):
     return detected_codesmells
 
 def main():
-    absolute_path="/Users/heqing/Downloads/DjangoBlog-master" #provide project absolute path
+    # Add project absolute path
+    absolute_path = "/Users/heqing/Downloads/DjangoBlog-master"
     codesmells = detect_smells(absolute_path)
     df = pd.DataFrame(codesmells)
     try:
