@@ -8,6 +8,7 @@ Long Method: MLOC
 Large Class: CLOC
 '''
 
+#you can change the threshold as you like.
 PAR = 5
 MLOC = 38
 CLOC = 29
