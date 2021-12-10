@@ -1,3 +1,7 @@
+'''
+To parse the source code to the parse tree
+'''
+
 import ast
 import re
 import codecs
@@ -6,41 +10,46 @@ import sys
 from json import JSONEncoder
 from ast import *
 
-is_python3 = hasattr(sys.version_info, 'major') and (sys.version_info.major == 3) #to check the python version if it is 3.
+# to check the python version if it is 3.
+is_python3 = hasattr(sys.version_info, 'major') and (
+    sys.version_info.major == 3)
+
 
 class AstEncoder(JSONEncoder):
     def default(self, o):
         if hasattr(o, '__dict__'):
             d = o.__dict__
-            # workaround: decode strings if it's not Python3 code
             if not is_python3:
                 for k in d:
                     if isinstance(d[k], str):
                         if k == 's':
-                          d[k] = lines[d['start']:d['end']]
+                            d[k] = lines[d['start']:d['end']]
                         else:
-                          d[k] = d[k].decode(enc)
+                            d[k] = d[k].decode(enc)
             d['type'] = o.__class__.__name__
             return d
         else:
             return str(o)
 
+
 enc = 'latin1'
 lines = ''
 
-def parse_dump(filename):
-      if is_python3:
-          encoder = AstEncoder()
-      else:
-          encoder = AstEncoder(encoding=enc)
 
-      tree = parse_file(filename)
-      encoded = encoder.encode(tree)
-      encoded = json.loads(encoded)
-      return encoded
+def parse_dump(filename):
+    if is_python3:
+        encoder = AstEncoder()
+    else:
+        encoder = AstEncoder(encoding=enc)
+
+    tree = parse_file(filename)
+    encoded = encoder.encode(tree)
+    encoded = json.loads(encoded)
+    return encoded
+
 
 def parse_file(filename):
-    improved=False
+    improved = False
     global enc, lines
     enc, enc_len = detect_encoding(filename)
     f = codecs.open(filename, 'r', enc)
@@ -49,12 +58,13 @@ def parse_file(filename):
     lines = re.sub(u'\ufeff', ' ', lines)
     # replace the encoding decl by spaces to fool python parser, otherwise you get 'encoding decl in unicode string' syntax error
     if enc_len > 0:
-        lines = re.sub('#.*coding\s*[:=]\s*[\w\d\-]+',  '#' + ' ' * (enc_len-1), lines)
+        lines = re.sub('#.*coding\s*[:=]\s*[\w\d\-]+',
+                       '#' + ' ' * (enc_len-1), lines)
     f.close()
-    return parse_string(lines, filename,improved)
+    return parse_string(lines, filename, improved)
 
 
-def parse_string(string, filename=None,improved=False):
+def parse_string(string, filename=None, improved=False):
     tree = ast.parse(string)
     if filename:
         tree.filename = filename
@@ -68,6 +78,7 @@ def parse_string(string, filename=None,improved=False):
         encoded = json.loads(encoded)
         return encoded
     return tree
+
 
 def detect_encoding(path):
     fin = open(path, 'rb')
@@ -85,6 +96,7 @@ def detect_encoding(path):
         return enc1, enc_len
     else:
         return 'latin1', -1
+
 
 def improve_ast(node, s):
     build_index_map(s)
@@ -128,11 +140,13 @@ def improve_node(node, s):
         find_start(node, s)
         ends = find_end(node, s)
         if ends is not None:
-            node.endlineno,_ = map_line_col(ends)
+            node.endlineno, _ = map_line_col(ends)
         add_missing_names(node, s)
 
         for f in node_fields(node):
             improve_node(f, s)
+
+# to find the start of the method
 
 
 def find_start(node, s):
@@ -174,6 +188,8 @@ def find_start(node, s):
         node.start = ret
 
     return ret
+
+# to find the end of the method
 
 
 def find_end(node, s):
@@ -232,7 +248,6 @@ def find_end(node, s):
     elif isinstance(node, ClassDef):
         the_end = find_end(node.body, s)
 
-    # print will be a Call in Python 3
     elif not is_python3 and isinstance(node, Print):
         the_end = start_seq(s, '\n', find_start(node, s))
 
@@ -251,9 +266,9 @@ def find_end(node, s):
             the_end = find_start(node, s) + len('return')
 
     elif (isinstance(node, For) or
-              isinstance(node, While) or
-              isinstance(node, If) or
-              isinstance(node, IfExp)):
+          isinstance(node, While) or
+          isinstance(node, If) or
+          isinstance(node, IfExp)):
         if node.orelse != []:
             the_end = find_end(node.orelse, s)
         else:
@@ -278,20 +293,20 @@ def find_end(node, s):
         the_end = find_start(node, s) + len(str(node.n))
 
     elif isinstance(node, List):
-        the_end = match_paren(s, '[', ']', find_start(node, s));
+        the_end = match_paren(s, '[', ']', find_start(node, s))
 
     elif isinstance(node, Subscript):
-        the_end = match_paren(s, '[', ']', find_start(node, s));
+        the_end = match_paren(s, '[', ']', find_start(node, s))
 
     elif isinstance(node, Tuple):
         if node.elts != []:
             the_end = find_end(node.elts[-1], s)
 
     elif isinstance(node, Dict):
-        the_end = match_paren(s, '{', '}', find_start(node, s));
+        the_end = match_paren(s, '{', '}', find_start(node, s))
 
     elif ((not is_python3 and isinstance(node, TryExcept)) or
-              (is_python3 and isinstance(node, Try))):
+          (is_python3 and isinstance(node, Try))):
         if node.orelse != []:
             the_end = find_end(node.orelse, s)
         elif node.handlers != []:
@@ -330,6 +345,8 @@ def find_end(node, s):
 
     return the_end
 
+# if the method missing the name
+
 
 def add_missing_names(node, s):
     if hasattr(node, 'extra_attr'):
@@ -347,16 +364,12 @@ def add_missing_names(node, s):
             node._fields += ('name_node',)
 
     elif isinstance(node, FunctionDef):
-        # skip to "def" because it may contain decorators like @property
+
         head = find_start(node, s)
         start = s.find("def", head) + len("def")
         if start != None:
             node.name_node = str_to_name(s, start)
             node._fields += ('name_node',)
-
-        # keyword_start = find_start(node, s)
-        # node.keyword_node = str_to_name(s, keyword_start)
-        # node._fields += ('keyword_node',)
 
         if node.args.vararg != None:
             if len(node.args.args) > 0:
@@ -387,7 +400,8 @@ def add_missing_names(node, s):
         if start is not None:
             name = str_to_name(s, start)
             node.attr_name = name
-            node._fields = ('value', 'attr_name')  # remove attr for node size accuracy
+            # remove attr for node size accuracy
+            node._fields = ('value', 'attr_name')
 
     elif isinstance(node, Compare):
         start = find_start(node, s)
@@ -396,9 +410,9 @@ def add_missing_names(node, s):
             node._fields += ('opsName',)
 
     elif (isinstance(node, BoolOp) or
-              isinstance(node, BinOp) or
-              isinstance(node, UnaryOp) or
-              isinstance(node, AugAssign)):
+          isinstance(node, BinOp) or
+          isinstance(node, UnaryOp) or
+          isinstance(node, AugAssign)):
         if hasattr(node, 'left'):
             start = find_end(node.left, s)
         else:
@@ -430,6 +444,8 @@ def add_missing_names(node, s):
     node.extra_attr = True
 
 # find a sequence in a string s, returning the start point
+
+
 def start_seq(s, pat, start):
     try:
         return s.index(pat, start)
@@ -465,7 +481,7 @@ def match_paren(s, open, close, start):
 
 # convert string to Name
 def str_to_name(s, start):
-    i = start;
+    i = start
     while i < len(s) and not is_alpha(s[i]):
         i += 1
     name_start = i
@@ -598,4 +614,3 @@ def is_alpha(c):
             or ('0' <= c <= '9')
             or ('a' <= c <= 'z')
             or ('A' <= c <= 'Z'))
-

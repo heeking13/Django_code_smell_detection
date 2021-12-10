@@ -6,7 +6,8 @@ import ast,_ast
 import re
 import astunparse
 
-class MyAst(ast.NodeVisitor):
+
+class CodeVistor(ast.NodeVisitor):
     def __init__(self):
         dir(_ast)
         self.fileName = None
@@ -14,7 +15,7 @@ class MyAst(ast.NodeVisitor):
         self.result = []
 
     def visit_FunctionDef(self,node):
-          #arguments count
+      #parameters count
       def findCharacter(s,d):
         try:
           value = s.index(d)

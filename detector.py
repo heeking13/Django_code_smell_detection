@@ -18,7 +18,7 @@ def detect_smells(path):
             astContent = parse.parse_file(file_name)
         except:
             continue
-        myast = astCheck.MyAst()
+        myast = astCheck.CodeVistor()
         myast.fileName = file_name
         myast.visit(astContent)
         for item in myast.result:
