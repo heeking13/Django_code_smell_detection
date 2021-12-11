@@ -1,0 +1,14 @@
+,Project path,File name,Line number,Number of metrics,Code smell name
+0,/Users/heqing/Downloads/python-mini-projects-master,/Users/heqing/Downloads/python-mini-projects-master/projects/Convert_numbers_to_word/converter.py,19,41,Long Method
+1,/Users/heqing/Downloads/python-mini-projects-master,/Users/heqing/Downloads/python-mini-projects-master/projects/chatbot/bot.py,24,130,Large Class
+2,/Users/heqing/Downloads/python-mini-projects-master,/Users/heqing/Downloads/python-mini-projects-master/projects/Create_calculator_app/calculator.py,43,55,Long Method
+3,/Users/heqing/Downloads/python-mini-projects-master,/Users/heqing/Downloads/python-mini-projects-master/projects/Instagram_profile/profilepic.py,8,41,Long Method
+4,/Users/heqing/Downloads/python-mini-projects-master,/Users/heqing/Downloads/python-mini-projects-master/projects/Movie Information Scraper/movieInfoScraper.py,7,42,Long Method
+5,/Users/heqing/Downloads/python-mini-projects-master,/Users/heqing/Downloads/python-mini-projects-master/projects/Terminal_Based_Hangman_Game/hangman.py,16,47,Long Method
+6,/Users/heqing/Downloads/python-mini-projects-master,/Users/heqing/Downloads/python-mini-projects-master/projects/Billing_system/biling_system.py,8,176,Long Method
+7,/Users/heqing/Downloads/python-mini-projects-master,/Users/heqing/Downloads/python-mini-projects-master/projects/Billing_system/biling_system.py,288,51,Long Method
+8,/Users/heqing/Downloads/python-mini-projects-master,/Users/heqing/Downloads/python-mini-projects-master/projects/Speed_Game/macOS/main.py,161,6,Long Parameter List
+9,/Users/heqing/Downloads/python-mini-projects-master,/Users/heqing/Downloads/python-mini-projects-master/projects/Speed_Game/windows/main.py,164,6,Long Parameter List
+10,/Users/heqing/Downloads/python-mini-projects-master,/Users/heqing/Downloads/python-mini-projects-master/projects/Web_page_summation/utils/model.py,7,5,Long Parameter List
+11,/Users/heqing/Downloads/python-mini-projects-master,/Users/heqing/Downloads/python-mini-projects-master/projects/Web_page_summation/utils/model.py,7,94,Long Method
+12,/Users/heqing/Downloads/python-mini-projects-master,/Users/heqing/Downloads/python-mini-projects-master/projects/Scrape_Hacker_News/main.py,15,63,Long Method
