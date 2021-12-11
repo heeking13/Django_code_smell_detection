@@ -23,10 +23,6 @@ class CodeVistor(ast.NodeVisitor):
           return -1
         else:
           return value
-      funcName = node.name.strip()
-      p = re.compile("^(__[a-zA-Z0-9]+__)$")
-      if p.match(funcName.strip()) and funcName != "__import__" and funcName != "__all__":
-        self.defmagic.add((funcName,self.fileName,node.lineno))
       stmt = astunparse.unparse(node.args)
       arguments = stmt.split(",")
       argsCount = 0
