@@ -6,46 +6,8 @@ import ast
 import re
 import codecs
 import json
-import sys
 from json import JSONEncoder
 from ast import *
-
-# to check the python version if it is 3.
-is_python3 = hasattr(sys.version_info, 'major') and (
-    sys.version_info.major == 3)
-
-
-class AstEncoder(JSONEncoder):
-    def default(self, o):
-        if hasattr(o, '__dict__'):
-            d = o.__dict__
-            if not is_python3:
-                for k in d:
-                    if isinstance(d[k], str):
-                        if k == 's':
-                            d[k] = lines[d['start']:d['end']]
-                        else:
-                            d[k] = d[k].decode(enc)
-            d['type'] = o.__class__.__name__
-            return d
-        else:
-            return str(o)
-
-
-enc = 'latin1'
-lines = ''
-
-
-def parse_dump(filename):
-    if is_python3:
-        encoder = AstEncoder()
-    else:
-        encoder = AstEncoder(encoding=enc)
-
-    tree = parse_file(filename)
-    encoded = encoder.encode(tree)
-    encoded = json.loads(encoded)
-    return encoded
 
 
 def parse_file(filename):
@@ -68,15 +30,6 @@ def parse_string(string, filename=None, improved=False):
     tree = ast.parse(string)
     if filename:
         tree.filename = filename
-    if improved:
-        improve_ast(tree, string)
-        if is_python3:
-            encoder = AstEncoder()
-        else:
-            encoder = AstEncoder(encoding=enc)
-        encoded = encoder.encode(tree)
-        encoded = json.loads(encoded)
-        return encoded
     return tree
 
 
@@ -85,7 +38,6 @@ def detect_encoding(path):
     prefix = str(fin.read(80))
     encs = re.findall('#.*coding\s*[:=]\s*([\w\d\-]+)', prefix)
     decl = re.findall('#.*coding\s*[:=]\s*[\w\d\-]+', prefix)
-
     if encs:
         enc1 = encs[0]
         enc_len = len(decl[0])
