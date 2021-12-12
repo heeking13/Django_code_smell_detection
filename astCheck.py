@@ -4,7 +4,6 @@ ast checker to iterating over all the nodes
 
 import ast
 import _ast
-import re
 import astunparse
 
 
@@ -15,6 +14,7 @@ class CodeVistor(ast.NodeVisitor):
         self.defmagic = set()
         self.result = []
 
+    #to iterate the function
     def visit_FunctionDef(self, node):
         # parameters count
         def findCharacter(s, d):
